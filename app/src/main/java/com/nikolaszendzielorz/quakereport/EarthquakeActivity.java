@@ -9,6 +9,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Earthquake>> {
 
-    //public static final String LOG_TAG = EarthquakeActivity.class.getName();
+    public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
     //private static final int EARTHQUAKE_LOADER_ID = 1; //use when more loaders
 
@@ -61,6 +62,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         // Get a reference to the LoaderManager, in order to interact with loaders. // for other library
         //LoaderManager loaderManager = getLoaderManager();
 
+        //Log.i(LOG_TAG, "Start of initLoader");
         getSupportLoaderManager().initLoader(0, null, this);
 
     }
@@ -68,12 +70,13 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
     @Override
     public Loader<ArrayList<Earthquake>> onCreateLoader(int id, Bundle args) {
-
+        //Log.i(LOG_TAG, "onCreateLoader callback");
         return new EarthquakeLoader(EarthquakeActivity.this,USGS_REQUEST_URL);
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Earthquake>> loader, ArrayList<Earthquake> data) {
+        //Log.i(LOG_TAG, "onLoadFinished callback");
         // Clear adapter from all the previous data.
         mAdapter.clear();
         // If there is a valid list of {@link Earthquake}s, then add them to the adapter's
@@ -85,6 +88,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Earthquake>> loader) {
+        //Log.i(LOG_TAG, "onLoaderReset callback");
         mAdapter.clear();
     }
 

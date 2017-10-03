@@ -4,6 +4,7 @@ package com.nikolaszendzielorz.quakereport;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -22,11 +23,13 @@ public class EarthquakeLoader extends AsyncTaskLoader<ArrayList<Earthquake>> {
 
     @Override
     protected void onStartLoading() {
+        //Log.i("Earthquake Loader", "onStartLoading method");
         forceLoad();
     }
 
     @Override
     public ArrayList<Earthquake> loadInBackground() {
+        //Log.i("Earthquake Loader", "loadInBackground method");
         if(mUrl == null){
             return null;
         }
