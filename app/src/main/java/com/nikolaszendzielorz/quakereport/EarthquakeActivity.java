@@ -3,6 +3,8 @@ package com.nikolaszendzielorz.quakereport;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
@@ -38,6 +40,14 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_earthquake);
 
+        // Check if there is internet connectivity.
+        ConnectivityManager cm =
+                (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
 
         mLoadingSpinner = (ProgressBar) findViewById(R.id.loading_spinner);
         // Find a reference to the {@link ListView} in the layout
@@ -45,23 +55,26 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         mEmptyListTextView = (TextView) findViewById(R.id.emptyList);
         earthquakeListView.setEmptyView(mEmptyListTextView);
 
-        mAdapter = new QuakeArrayAdapter(this, new ArrayList<Earthquake>());
+        if(isConnected) {
 
-        // Set the adapter on the {@link ListView}
-        // so the list can be populated in the user interface
-        earthquakeListView.setAdapter(mAdapter);
+            mAdapter = new QuakeArrayAdapter(this, new ArrayList<Earthquake>());
 
-        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Earthquake currentEarthquake = mAdapter.getItem(position);
-                // if(currentEarthquake != null)
-                String url = currentEarthquake.getURL();
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
-            }
-        });
+            // Set the adapter on the {@link ListView}
+            // so the list can be populated in the user interface
+            earthquakeListView.setAdapter(mAdapter);
+
+            earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Earthquake currentEarthquake = mAdapter.getItem(position);
+                    // if(currentEarthquake != null)
+                    String url = currentEarthquake.getURL();
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    startActivity(i);
+                }
+            });
+
 
 
         // Perform a network request and update UI //old version used no loader
@@ -72,6 +85,11 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
         //Log.i(LOG_TAG, "Start of initLoader");
         getSupportLoaderManager().initLoader(0, null, this);
+
+        }else{
+            mLoadingSpinner.setVisibility(View.GONE);
+            mEmptyListTextView.setText("No internet connection.");
+        }
 
     }
 
