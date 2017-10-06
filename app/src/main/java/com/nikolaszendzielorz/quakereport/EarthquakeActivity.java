@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     private static final String USGS_REQUEST_URL =
             "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-05-02&minfelt=50&minmagnitude=5";
 
+    private ProgressBar mLoadingSpinner;
     private TextView mEmptyListTextView;
     private QuakeArrayAdapter mAdapter;
 
@@ -36,6 +38,8 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_earthquake);
 
+
+        mLoadingSpinner = (ProgressBar) findViewById(R.id.loading_spinner);
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
         mEmptyListTextView = (TextView) findViewById(R.id.emptyList);
@@ -81,7 +85,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     public void onLoadFinished(Loader<ArrayList<Earthquake>> loader, ArrayList<Earthquake> data) {
         //Log.i(LOG_TAG, "onLoadFinished callback");
-
+        mLoadingSpinner.setVisibility(View.GONE);
         mEmptyListTextView.setText(R.string.no_earthquakes);
         // Clear adapter from all the previous data.
         mAdapter.clear();
